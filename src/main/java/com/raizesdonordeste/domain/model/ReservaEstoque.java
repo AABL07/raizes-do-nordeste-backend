@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 public class ReservaEstoque {
 
     private Long id;
+    private Estoque estoque;
+    private ItemPedido itemPedido;
+    private MovimentacaoEstoque movimentacaoEstoque;
     private Integer quantidade;
     private StatusReservaEstoque status;
     private LocalDateTime criadoEm;

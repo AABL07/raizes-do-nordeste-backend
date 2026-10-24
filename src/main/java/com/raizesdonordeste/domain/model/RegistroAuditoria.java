@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class RegistroAuditoria {
 
     private Long id;
+    private Usuario usuario;
     private String acao;
     private String recursoTipo;
     private Long recursoId;

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class Consentimento {
 
     private Long id;
+    private Cliente cliente;
     private FinalidadeConsentimento finalidade;
     private StatusConsentimento status;
     private String versaoTermo;

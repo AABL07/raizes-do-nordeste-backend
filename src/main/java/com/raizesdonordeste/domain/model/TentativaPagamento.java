@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class TentativaPagamento {
 
     private Long id;
+    private Pedido pedido;
     private String chaveIdempotencia;
     private ResultadoPagamento resultado;
     private BigDecimal valorSolicitado;
