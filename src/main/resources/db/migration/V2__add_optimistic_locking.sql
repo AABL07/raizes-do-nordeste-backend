@@ -1,0 +1,5 @@
+ALTER TABLE estoque
+    ADD COLUMN version BIGINT NOT NULL DEFAULT 0;
+
+ALTER TABLE conta_fidelidade
+    ADD COLUMN version BIGINT NOT NULL DEFAULT 0;
