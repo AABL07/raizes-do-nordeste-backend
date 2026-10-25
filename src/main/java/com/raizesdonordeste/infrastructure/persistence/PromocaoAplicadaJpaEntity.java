@@ -62,4 +62,33 @@ public class PromocaoAplicadaJpaEntity {
     public void setAplicadoEm(LocalDateTime aplicadoEm) {
         this.aplicadoEm = aplicadoEm;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public PedidoJpaEntity getPedido() {
+        return pedido;
+    }
+
+    public PromocaoJpaEntity getPromocao() {
+        return promocao;
+    }
+
+    public TipoBeneficio getTipoBeneficio() {
+        return tipoBeneficio;
+    }
+
+    public BigDecimal getValorBeneficio() {
+        return valorBeneficio;
+    }
+
+    public BigDecimal getValorDescontoAplicado() {
+        return valorDescontoAplicado;
+    }
+
+    public LocalDateTime getAplicadoEm() {
+        return aplicadoEm;
+    }
+
 }
