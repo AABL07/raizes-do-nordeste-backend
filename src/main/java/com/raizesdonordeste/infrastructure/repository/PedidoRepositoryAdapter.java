@@ -6,28 +6,83 @@ import com.raizesdonordeste.domain.model.Pedido;
 import com.raizesdonordeste.infrastructure.persistence.mapper.PedidoMapper;
 import java.util.Optional;
 import java.util.List;
+import com.raizesdonordeste.domain.model.ItemPedido;
+import com.raizesdonordeste.infrastructure.persistence.mapper.ItemPedidoMapper;
 
 @Repository
 public class PedidoRepositoryAdapter implements PedidoRepository {
 
     private final PedidoJpaRepository pedidoJpaRepository;
 
-    public PedidoRepositoryAdapter(PedidoJpaRepository pedidoJpaRepository) {
+    private final ItemPedidoJpaRepository itemPedidoJpaRepository;
+
+
+    public PedidoRepositoryAdapter(
+            PedidoJpaRepository pedidoJpaRepository,
+            ItemPedidoJpaRepository itemPedidoJpaRepository) {
+
         this.pedidoJpaRepository = pedidoJpaRepository;
+        this.itemPedidoJpaRepository = itemPedidoJpaRepository;
     }
 
     @Override
     public Pedido salvar(Pedido pedido) {
+
         var entity = PedidoMapper.toJpa(pedido);
         var salvo = pedidoJpaRepository.save(entity);
 
-        return PedidoMapper.toDomain(salvo);
+        List<ItemPedido> itensSalvos;
+
+        if (pedido.getItens() == null) {
+            itensSalvos = List.of();
+        } else {
+            itensSalvos = pedido.getItens()
+                    .stream()
+                    .map(itemPedido -> {
+                        var itemEntity = ItemPedidoMapper.toJpa(itemPedido);
+
+                        itemEntity.setPedido(salvo);
+
+                        var itemSalvo = itemPedidoJpaRepository.save(itemEntity);
+
+                        return ItemPedidoMapper.toDomain(itemSalvo);
+                    })
+                    .toList();
+        }
+
+        var pedidoSalvo = PedidoMapper.toDomain(salvo);
+
+        for (ItemPedido itemPedido : itensSalvos) {
+            itemPedido.setPedido(pedidoSalvo);
+        }
+
+        pedidoSalvo.setItens(itensSalvos);
+
+        return pedidoSalvo;
     }
 
     @Override
     public Optional<Pedido> buscarPorId(Long id) {
+
         return pedidoJpaRepository.findById(id)
-                .map(PedidoMapper::toDomain);
+                .map(entity -> {
+
+                    Pedido pedido = PedidoMapper.toDomain(entity);
+
+                    List<ItemPedido> itens = itemPedidoJpaRepository
+                            .findByPedidoId(id)
+                            .stream()
+                            .map(ItemPedidoMapper::toDomain)
+                            .toList();
+
+                    for (ItemPedido itemPedido : itens) {
+                        itemPedido.setPedido(pedido);
+                    }
+
+                    pedido.setItens(itens);
+
+                    return pedido;
+                });
     }
 
     @Override
@@ -37,4 +92,5 @@ public class PedidoRepositoryAdapter implements PedidoRepository {
                 .map(PedidoMapper::toDomain)
                 .toList();
     }
+
 }

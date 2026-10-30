@@ -12,15 +12,31 @@ public class TentativaPagamentoRepositoryAdapter implements TentativaPagamentoRe
 
     private final TentativaPagamentoJpaRepository tentativaPagamentoJpaRepository;
 
+    private final PedidoJpaRepository pedidoJpaRepository;
+
     public TentativaPagamentoRepositoryAdapter(
-            TentativaPagamentoJpaRepository tentativaPagamentoJpaRepository
+            TentativaPagamentoJpaRepository tentativaPagamentoJpaRepository,
+            PedidoJpaRepository pedidoJpaRepository
     ) {
         this.tentativaPagamentoJpaRepository = tentativaPagamentoJpaRepository;
+        this.pedidoJpaRepository = pedidoJpaRepository;
     }
 
     @Override
     public TentativaPagamento salvar(TentativaPagamento tentativaPagamento) {
+
         var entity = TentativaPagamentoMapper.toJpa(tentativaPagamento);
+
+        var pedidoJpa = pedidoJpaRepository
+                .findById(tentativaPagamento.getPedido().getId())
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Pedido não encontrado ao persistir tentativa de pagamento."
+                        )
+                );
+
+        entity.setPedido(pedidoJpa);
+
         var salva = tentativaPagamentoJpaRepository.save(entity);
 
         return TentativaPagamentoMapper.toDomain(salva);
