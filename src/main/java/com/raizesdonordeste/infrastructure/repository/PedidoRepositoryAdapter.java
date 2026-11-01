@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.List;
 import com.raizesdonordeste.domain.model.ItemPedido;
 import com.raizesdonordeste.infrastructure.persistence.mapper.ItemPedidoMapper;
+import com.raizesdonordeste.domain.enums.CanalPedido;
 
 @Repository
 public class PedidoRepositoryAdapter implements PedidoRepository {
@@ -15,7 +16,6 @@ public class PedidoRepositoryAdapter implements PedidoRepository {
     private final PedidoJpaRepository pedidoJpaRepository;
 
     private final ItemPedidoJpaRepository itemPedidoJpaRepository;
-
 
     public PedidoRepositoryAdapter(
             PedidoJpaRepository pedidoJpaRepository,
@@ -88,6 +88,16 @@ public class PedidoRepositoryAdapter implements PedidoRepository {
     @Override
     public List<Pedido> buscarTodos() {
         return pedidoJpaRepository.findAll()
+                .stream()
+                .map(PedidoMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Pedido> buscarPorCanal(CanalPedido canalPedido) {
+
+        return pedidoJpaRepository
+                .findByCanalPedido(canalPedido)
                 .stream()
                 .map(PedidoMapper::toDomain)
                 .toList();
