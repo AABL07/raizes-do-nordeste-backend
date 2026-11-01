@@ -1,0 +1,28 @@
+Raízes do Nordeste - Evidência de Testes da API
+Executado em: 2026-11-01 19:26:30
+
+Total: 18
+PASS:  18
+FAIL:  0
+
+
+Numero Resultado Cenario                                          Detalhe
+------ --------- -------                                          -------
+     1 PASS      Login ADMIN
+     2 PASS      Consultar usuário ADMIN autenticado
+     3 PASS      Login CLIENTE
+     4 PASS      Login COZINHA
+     5 PASS      Item de cardápio inexistente
+     6 PASS      Criar pedido
+     7 PASS      Consultar pedido por ID
+     8 PASS      Listar pedidos
+     9 PASS      Reservar pontos no pedido
+    10 PASS      Aprovar pagamento
+    11 PASS      Repetir pagamento com mesma chave - idempotência
+    12 PASS      Alterar pedido para PRONTO
+    13 PASS      Alterar pedido para ENTREGUE
+    14 PASS      Acesso sem JWT
+    15 PASS      CLIENTE sem permissão para listar pedidos
+    16 PASS      Criar pedido com quantidade zero
+    17 PASS      Criar pedido com enum inválido
+    18 PASS      Resgatar pontos após pedido entregue

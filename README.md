@@ -1,4 +1,4 @@
-# Raízes do Nordeste — Back-End
+﻿# Raízes do Nordeste — Back-End
 
 API REST desenvolvida para o Projeto Multidisciplinar — Trilha Back-End, com foco na operação de uma rede de lanchonetes com múltiplas unidades e canais de atendimento.
 
@@ -237,7 +237,7 @@ BUILD SUCCESS
 
 Atualmente existe um teste automatizado de carregamento do contexto Spring (`contextLoads`).
 
-Os fluxos funcionais principais também foram validados de forma integrada durante o desenvolvimento. Uma coleção Postman reproduzível com cenários positivos e negativos será adicionada ao repositório.
+Os fluxos funcionais principais também foram validados de forma integrada. O repositório inclui uma coleção Postman reproduzível e um runner PowerShell com cenários positivos e negativos.
 
 ## Swagger / OpenAPI
 
@@ -296,4 +296,145 @@ Backend funcional com:
 - fidelização;
 - tratamento de erros.
 
-A documentação OpenAPI/Swagger está concluída. A coleção Postman e a documentação acadêmica final estão em preparação para a entrega.
+A documentação OpenAPI/Swagger, os scripts de demonstração e a coleção de testes da API estão concluídos. A documentação acadêmica final será preparada separadamente para a entrega.
+
+## Dados de demonstração
+
+O diretório `docs/database` contém scripts auxiliares para execução e testes locais.
+
+### Carregar dados de demonstração
+
+Com o PostgreSQL em execução:
+
+~~~powershell
+psql -h localhost -p 5432 -U raizes_app -d raizes_do_nordeste -f .\docs\database\seed-demo.sql
+~~~
+
+O script cria registros destinados exclusivamente ao ambiente local de demonstração, incluindo:
+
+- unidade;
+- usuários com diferentes perfis de acesso;
+- cliente;
+- produto e item de cardápio;
+- estoque;
+- conta de fidelidade;
+- consentimento para fidelidade.
+
+As credenciais presentes nos dados de demonstração não devem ser utilizadas em produção.
+
+### Restaurar o estado de testes
+
+Antes de repetir os testes integrados, execute:
+
+~~~powershell
+psql -h localhost -p 5432 -U raizes_app -d raizes_do_nordeste -f .\docs\database\reset-demo.sql
+~~~
+
+O reset remove transações geradas pelos testes e restaura o estado esperado do estoque e da fidelidade.
+
+Estado inicial esperado:
+
+~~~text
+Pedidos demo:       0
+Estoque físico:     100
+Estoque reservado:  0
+Saldo de pontos:    1000
+Pontos reservados:  0
+~~~
+
+## Testes da API
+
+Os artefatos de testes funcionais estão localizados em `docs/postman`.
+
+Arquivos:
+
+~~~text
+Raizes-do-Nordeste.postman_collection.json
+Raizes-do-Nordeste.postman_environment.json
+run-tests.ps1
+test-results.txt
+~~~
+
+A coleção Postman utiliza o formato Collection v2.1 e contém cenários organizados nos grupos:
+
+~~~text
+Auth
+Products
+Orders
+Fidelity
+Payment
+Errors
+~~~
+
+Como a API não expõe um endpoint REST específico para produtos, a disponibilidade de produto, cardápio e estoque é validada indiretamente durante a criação do pedido.
+
+A suíte contempla autenticação, autorização por perfil, criação e consulta de pedidos, reserva de pontos, processamento de pagamento, idempotência, evolução de status e cenários de erro.
+
+### Executar os testes integrados
+
+Pré-requisitos:
+
+~~~text
+Aplicação executando em http://localhost:8080
+PostgreSQL disponível
+Dados de demonstração carregados
+Estado de testes restaurado
+~~~
+
+No PowerShell:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\docs\postman\run-tests.ps1
+~~~
+
+O runner utiliza os mesmos dados e fluxos definidos na coleção Postman e salva a evidência em:
+
+~~~text
+docs/postman/test-results.txt
+~~~
+
+Na execução de validação realizada em 01/11/2026, foram obtidos:
+
+~~~text
+Total: 18
+PASS:  18
+FAIL:  0
+~~~
+
+Os cenários incluem casos positivos e negativos, entre eles:
+
+- login e autenticação JWT;
+- autorização por perfil;
+- item de cardápio inexistente;
+- criação e consulta de pedido;
+- reserva de pontos;
+- pagamento aprovado;
+- idempotência de pagamento;
+- transições para `PRONTO` e `ENTREGUE`;
+- acesso sem autenticação;
+- acesso com perfil sem permissão;
+- validação de quantidade inválida;
+- enum inválido;
+- tentativa de resgate de pontos em estado incompatível.
+
+## Testes automatizados Java
+
+O projeto também possui teste de carregamento do contexto Spring Boot executado pelo Maven:
+
+~~~powershell
+.\mvnw.cmd test
+~~~
+
+Na validação realizada em 01/11/2026:
+
+~~~text
+Tests run: 1
+Failures: 0
+Errors: 0
+Skipped: 0
+BUILD SUCCESS
+~~~
+
+Esse teste verifica a inicialização do contexto da aplicação.
+
+Os testes funcionais/integrados da API são mantidos separadamente nos artefatos de `docs/postman`.
