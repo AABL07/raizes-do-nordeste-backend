@@ -16,6 +16,7 @@ O projeto contempla autenticação e autorização, pedidos, estoque por unidade
 - Flyway
 - JJWT 0.13.0
 - Maven / Maven Wrapper
+- Springdoc OpenAPI 3.0.3 / Swagger UI
 
 ## Requisitos
 
@@ -183,7 +184,7 @@ POST   /pedidos/{pedidoId}/pagamentos
 POST   /pedidos/{pedidoId}/fidelidade/resgate
 ```
 
-Os contratos completos serão disponibilizados pela documentação OpenAPI/Swagger.
+Os contratos completos estão disponíveis pela documentação OpenAPI/Swagger.
 
 ## Segurança
 
@@ -240,9 +241,24 @@ Os fluxos funcionais principais também foram validados de forma integrada duran
 
 ## Swagger / OpenAPI
 
-A documentação OpenAPI/Swagger será configurada antes da entrega final do projeto.
+A API possui documentação interativa utilizando Springdoc OpenAPI.
 
-Após sua implementação, esta seção será atualizada com o endereço de acesso à interface Swagger.
+Com a aplicação em execução, acesse:
+
+- Swagger UI: http://localhost:8080/swagger-ui/index.html
+- Especificação OpenAPI: http://localhost:8080/v3/api-docs
+
+A documentação utiliza autenticação Bearer JWT.
+
+Para testar endpoints protegidos pelo Swagger:
+
+1. Execute `POST /auth/login`.
+2. Copie o token JWT retornado.
+3. Clique em **Authorize**.
+4. Informe o token no campo disponível.
+5. Execute os endpoints protegidos.
+
+O endpoint `POST /auth/login` é público. Os demais endpoints documentados exigem autenticação conforme as regras de acesso da aplicação.
 
 ## Estrutura principal
 
@@ -280,4 +296,4 @@ Backend funcional com:
 - fidelização;
 - tratamento de erros.
 
-Documentação OpenAPI/Swagger, coleção Postman e documentação acadêmica final estão em preparação para a entrega.
+A documentação OpenAPI/Swagger está concluída. A coleção Postman e a documentação acadêmica final estão em preparação para a entrega.

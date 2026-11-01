@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/pedidos/{pedidoId}/pagamentos")
+@SecurityRequirement(name = "bearerAuth")
 public class PagamentoController {
 
     private final ProcessarPagamentoUseCase processarPagamentoUseCase;
